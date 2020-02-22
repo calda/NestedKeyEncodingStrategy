@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2E9774F42401DB3E0061D12F /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9774F32401DB3E0061D12F /* main.swift */; };
+		2E9774FB2401DB4C0061D12F /* JSONEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9774FA2401DB4C0061D12F /* JSONEncoder.swift */; };
+		2E9774FF2401DC0C0061D12F /* DecodingError+InternalUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E9774FE2401DC0C0061D12F /* DecodingError+InternalUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,8 @@
 /* Begin PBXFileReference section */
 		2E9774F02401DB3E0061D12F /* NestedKeyEncodingStrategy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NestedKeyEncodingStrategy; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E9774F32401DB3E0061D12F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		2E9774FA2401DB4C0061D12F /* JSONEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEncoder.swift; sourceTree = "<group>"; };
+		2E9774FE2401DC0C0061D12F /* DecodingError+InternalUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DecodingError+InternalUtils.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,8 @@
 			isa = PBXGroup;
 			children = (
 				2E9774F32401DB3E0061D12F /* main.swift */,
+				2E9774FA2401DB4C0061D12F /* JSONEncoder.swift */,
+				2E9774FE2401DC0C0061D12F /* DecodingError+InternalUtils.swift */,
 			);
 			path = NestedKeyEncodingStrategy;
 			sourceTree = "<group>";
@@ -120,7 +126,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E9774FB2401DB4C0061D12F /* JSONEncoder.swift in Sources */,
 				2E9774F42401DB3E0061D12F /* main.swift in Sources */,
+				2E9774FF2401DC0C0061D12F /* DecodingError+InternalUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
