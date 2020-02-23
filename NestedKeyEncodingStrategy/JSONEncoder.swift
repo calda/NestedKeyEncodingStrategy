@@ -1439,6 +1439,12 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
         }
     }
     
+    private func valueFromContainer(at key: CodingKey) throws -> Any {
+        try self.container.value(path: _converted(key),
+                                 parentCodingPath: codingPath,
+                                 _errorDescription: _errorDescription(of:))
+    }
+    
     // MARK: - KeyedDecodingContainerProtocol Methods
 
     public var allKeys: [Key] {
@@ -1446,7 +1452,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func contains(_ key: Key) -> Bool {
-        return self.container[path: _converted(key)] != nil
+        return (try? self.valueFromContainer(at: key)) != nil
     }
 
     private func _errorDescription(of key: CodingKey) -> String {
@@ -1470,18 +1476,13 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
     
     public func decodeNil(forKey key: Key) throws -> Bool {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
-
+        let entry = try self.valueFromContainer(at: key)
         return entry is NSNull
     }
 
     public func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
-
+        let entry = try self.valueFromContainer(at: key)
+        
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
@@ -1493,10 +1494,8 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Int.Type, forKey key: Key) throws -> Int {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
-
+        let entry = try self.valueFromContainer(at: key)
+        
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
@@ -1508,9 +1507,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Int8.Type, forKey key: Key) throws -> Int8 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1523,9 +1520,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Int16.Type, forKey key: Key) throws -> Int16 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1538,9 +1533,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Int32.Type, forKey key: Key) throws -> Int32 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1553,9 +1546,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Int64.Type, forKey key: Key) throws -> Int64 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1568,9 +1559,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: UInt.Type, forKey key: Key) throws -> UInt {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1583,9 +1572,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: UInt8.Type, forKey key: Key) throws -> UInt8 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1598,9 +1585,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: UInt16.Type, forKey key: Key) throws -> UInt16 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1613,9 +1598,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: UInt32.Type, forKey key: Key) throws -> UInt32 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1628,9 +1611,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: UInt64.Type, forKey key: Key) throws -> UInt64 {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1643,9 +1624,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Float.Type, forKey key: Key) throws -> Float {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1658,9 +1637,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: Double.Type, forKey key: Key) throws -> Double {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1673,9 +1650,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode(_ type: String.Type, forKey key: Key) throws -> String {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1688,9 +1663,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
     }
 
     public func decode<T : Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
-        guard let entry = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(_errorDescription(of: key))."))
-        }
+        let entry = try self.valueFromContainer(at: key)
 
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
@@ -1706,11 +1679,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
-        guard let value = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key,
-                                            DecodingError.Context(codingPath: self.codingPath,
-                                                                  debugDescription: "Cannot get \(KeyedDecodingContainer<NestedKey>.self) -- no value found for key \(_errorDescription(of: key))"))
-        }
+        let value = try self.valueFromContainer(at: key)
 
         guard let dictionary = value as? [String : Any] else {
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [String : Any].self, reality: value)
@@ -1724,11 +1693,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
-        guard let value = self.container[path: _converted(key)] else {
-            throw DecodingError.keyNotFound(key,
-                                            DecodingError.Context(codingPath: self.codingPath,
-                                                                  debugDescription: "Cannot get UnkeyedDecodingContainer -- no value found for key \(_errorDescription(of: key))"))
-        }
+        let value = try self.valueFromContainer(at: key)
 
         guard let array = value as? [Any] else {
             throw DecodingError._typeMismatch(at: self.codingPath, expectation: [Any].self, reality: value)
@@ -1741,7 +1706,7 @@ fileprivate struct _JSONKeyedDecodingContainer<K : CodingKey> : KeyedDecodingCon
         self.decoder.codingPath.append(key)
         defer { self.decoder.codingPath.removeLast() }
 
-        let value: Any = self.container[path: _converted(key)] ?? NSNull()
+        let value: Any = (try? self.valueFromContainer(at: key)) ?? NSNull()
         return __JSONDecoder(referencing: value, at: self.decoder.codingPath, options: self.decoder.options)
     }
 
@@ -2635,14 +2600,8 @@ fileprivate struct _JSONKey : CodingKey {
 fileprivate extension NSMutableDictionary {
     subscript(path path: [CodingKey]) -> Any? {
         get {
-            switch path.count {
-            case 0:
-                return nil
-            case 1:
-                return self[path[0].stringValue]
-            default:
-                return self[path: Array(path.dropFirst())]
-            }
+            // todo: don't use a subscript for this
+            fatalError()
         }
         set(newValue) {
             switch path.count {
@@ -2666,21 +2625,40 @@ fileprivate extension NSMutableDictionary {
 }
 
 fileprivate extension Dictionary where Key == String, Value == Any {
-    subscript(path path: [CodingKey]) -> Any? {
-        get {
-            switch path.count {
-            case 0:
-                return nil
-            case 1:
-                return self[path[0].stringValue]
-            default:
-                guard let childDictionary = self[path[0].stringValue] as? [String: Any] else {
-                    // todo: throw
-                    return nil
-                }
-                
-                return childDictionary[path: Array(path.dropFirst())]
+    
+    /// Retrieves a value from this Dictionary by recursively following the given `path`.
+    /// - Parameters:
+    ///   - path: The nested path to follow.
+    ///   - parentCodingPath: The Coding Keys used to reach this position in the container.
+    ///   - _errorDescription: A function that builds the String description of a Coding Key to be used in an error message.
+    func value(path: [CodingKey],
+               parentCodingPath: [CodingKey],
+               _errorDescription: (CodingKey) -> String) throws -> Any
+    {
+        switch path.count {
+        case 0:
+            return self
+            
+        case 1:
+            let key = path[0]
+            guard let value = self[key.stringValue] else {
+                throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: parentCodingPath, debugDescription: "No value associated with key \(_errorDescription(key))."))
             }
+            
+            return value
+            
+        default:
+            let key = path[0]
+            guard let value = self[key.stringValue] else {
+                throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: parentCodingPath, debugDescription: "Cannot get nested JSON object -- no value found for key \(_errorDescription(key))"))
+            }
+            
+            let currentCodingPath = parentCodingPath + [key]
+            guard let dictionary = value as? [String : Any] else {
+                throw DecodingError._typeMismatch(at: currentCodingPath, expectation: [String : Any].self, reality: value)
+            }
+            
+            return try dictionary.value(path: Array(path.dropFirst()), parentCodingPath: currentCodingPath, _errorDescription: _errorDescription)
         }
     }
 }

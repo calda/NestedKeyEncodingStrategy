@@ -100,7 +100,7 @@ class NestedKeyEncodingStrategyTests: XCTestCase {
         
         XCTAssertThrowsError(
             try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: jsonData))
-            { AssertIsDecodingKeyNotFoundError($0, at: "nestedObject") }
+            { AssertIsDecodingKeyNotFoundError($0, at: "") }
     }
     
     func test_decodeNested_failsBecauseOfMissingKeyAtEndOfPath() throws {
@@ -108,7 +108,7 @@ class NestedKeyEncodingStrategyTests: XCTestCase {
         
         XCTAssertThrowsError(
             try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: jsonData))
-            { AssertIsDecodingKeyNotFoundError($0, at: "nestedObject.nestedValue") }
+            { AssertIsDecodingKeyNotFoundError($0, at: "nestedObject") }
     }
 
 }
@@ -137,7 +137,7 @@ func AssertIsDecodingKeyNotFoundError(
     line: UInt = #line)
 {
     switch error as? DecodingError {
-    case .typeMismatch(_, let context):
+    case .keyNotFound(_, let context):
         let errorPath = context.codingPath.map { $0.stringValue }.joined(separator: ".")
         XCTAssertEqual(errorPath, expectedPath, "Unexpected coding path: \(errorPath)", file: file, line: line)
     default:
