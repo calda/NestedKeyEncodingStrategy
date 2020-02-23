@@ -40,6 +40,7 @@ struct NestedKeyCoding: Codable {
     
     static var decoder: NestedKeyEncodingStrategy.JSONDecoder {
         let decoder = NestedKeyEncodingStrategy.JSONDecoder()
+        decoder.nestedKeyDecodingStrategy = .useDotNotation
         return decoder
     }
 }
@@ -48,7 +49,7 @@ struct NestedKeyCoding: Codable {
 
 class NestedKeyEncodingStrategyTests: XCTestCase {
 
-    func test_encodeNested_decodeObjects() {
+    func test_encodeNested_decodeObjects() throws {
         let nestedKeyCodingInstance = NestedKeyCoding(
             rootValue: "root",
             nestedValue: "nested")
@@ -60,14 +61,14 @@ class NestedKeyEncodingStrategyTests: XCTestCase {
             data.flatMap { String(data: $0, encoding: .utf8) },
             #"{"rootValue":"root","nestedObject":{"nestedValue":"nested"}}"#)
         
-        let objectCodingInstance = data.flatMap { try? NestedObjectCoding.decoder.decode(NestedObjectCoding.self, from: $0) }
+        let objectCodingInstance = try data.flatMap { try NestedObjectCoding.decoder.decode(NestedObjectCoding.self, from: $0) }
         XCTAssertNotNil(objectCodingInstance)
         
         XCTAssertEqual(nestedKeyCodingInstance.rootValue, objectCodingInstance?.rootValue)
         XCTAssertEqual(nestedKeyCodingInstance.nestedValue, objectCodingInstance?.nestedObject.nestedValue)
     }
     
-    func test_encodeObjects_decodeNested() {
+    func test_encodeObjects_decodeNested() throws {
         let objectCodingInstance = NestedObjectCoding(
             rootValue: "root",
             nestedObject: NestedObjectCoding.NestedObject(nestedValue: "nested"))
@@ -79,7 +80,7 @@ class NestedKeyEncodingStrategyTests: XCTestCase {
             data.flatMap { String(data: $0, encoding: .utf8) },
             #"{"rootValue":"root","nestedObject":{"nestedValue":"nested"}}"#)
         
-        let nestedKeyCodingInstance = data.flatMap { try? NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: $0) }
+        let nestedKeyCodingInstance = try data.flatMap { try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: $0) }
         XCTAssertNotNil(nestedKeyCodingInstance)
         
         XCTAssertEqual(nestedKeyCodingInstance?.rootValue, objectCodingInstance.rootValue)
