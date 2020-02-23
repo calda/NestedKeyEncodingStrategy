@@ -557,7 +557,7 @@ fileprivate struct _JSONKeyedEncodingContainer<K : CodingKey> : KeyedEncodingCon
             dictionary = existingContainer as! NSMutableDictionary
         } else {
             dictionary = NSMutableDictionary()
-            self.container[containerKey] = dictionary
+            self.container[path: containerKey] = dictionary
         }
 
         self.codingPath.append(key)
@@ -578,7 +578,7 @@ fileprivate struct _JSONKeyedEncodingContainer<K : CodingKey> : KeyedEncodingCon
             array = existingContainer as! NSMutableArray
         } else {
             array = NSMutableArray()
-            self.container[containerKey] = array
+            self.container[path: containerKey] = array
         }
 
         self.codingPath.append(key)
@@ -2600,8 +2600,18 @@ fileprivate struct _JSONKey : CodingKey {
 fileprivate extension NSMutableDictionary {
     subscript(path path: [CodingKey]) -> Any? {
         get {
-            // todo: don't use a subscript for this
-            fatalError()
+            switch path.count {
+            case 0:
+                return self
+            case 1:
+                return self[path[0].stringValue]
+            default:
+                guard let dictionary = self[path[0].stringValue] as? NSMutableDictionary else {
+                    return nil
+                }
+                
+                return dictionary[path: Array(path.dropFirst())]
+            }
         }
         set(newValue) {
             switch path.count {
