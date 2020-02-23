@@ -49,42 +49,98 @@ struct NestedKeyCoding: Codable {
 
 class NestedKeyEncodingStrategyTests: XCTestCase {
 
-    func test_encodeNested_decodeObjects() throws {
+    func test_encodeNestedKeys_decodeObjects() throws {
         let nestedKeyCodingInstance = NestedKeyCoding(
             rootValue: "root",
             nestedValue: "nested")
         
-        let data = try? NestedKeyCoding.encoder.encode(nestedKeyCodingInstance)
+        let data = try NestedKeyCoding.encoder.encode(nestedKeyCodingInstance)
         XCTAssertNotNil(data)
         
         XCTAssertEqual(
-            data.flatMap { String(data: $0, encoding: .utf8) },
+            String(data: data, encoding: .utf8),
             #"{"rootValue":"root","nestedObject":{"nestedValue":"nested"}}"#)
         
-        let objectCodingInstance = try data.flatMap { try NestedObjectCoding.decoder.decode(NestedObjectCoding.self, from: $0) }
+        let objectCodingInstance = try NestedObjectCoding.decoder.decode(NestedObjectCoding.self, from: data)
         XCTAssertNotNil(objectCodingInstance)
         
-        XCTAssertEqual(nestedKeyCodingInstance.rootValue, objectCodingInstance?.rootValue)
-        XCTAssertEqual(nestedKeyCodingInstance.nestedValue, objectCodingInstance?.nestedObject.nestedValue)
+        XCTAssertEqual(nestedKeyCodingInstance.rootValue, objectCodingInstance.rootValue)
+        XCTAssertEqual(nestedKeyCodingInstance.nestedValue, objectCodingInstance.nestedObject.nestedValue)
     }
     
-    func test_encodeObjects_decodeNested() throws {
+    func test_encodeObjects_decodeNestedKeys() throws {
         let objectCodingInstance = NestedObjectCoding(
             rootValue: "root",
             nestedObject: NestedObjectCoding.NestedObject(nestedValue: "nested"))
         
-        let data = try? NestedObjectCoding.encoder.encode(objectCodingInstance)
+        let data = try NestedObjectCoding.encoder.encode(objectCodingInstance)
         XCTAssertNotNil(data)
         
         XCTAssertEqual(
-            data.flatMap { String(data: $0, encoding: .utf8) },
+            String(data: data, encoding: .utf8),
             #"{"rootValue":"root","nestedObject":{"nestedValue":"nested"}}"#)
         
-        let nestedKeyCodingInstance = try data.flatMap { try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: $0) }
+        let nestedKeyCodingInstance = try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: data)
         XCTAssertNotNil(nestedKeyCodingInstance)
         
-        XCTAssertEqual(nestedKeyCodingInstance?.rootValue, objectCodingInstance.rootValue)
-        XCTAssertEqual(nestedKeyCodingInstance?.nestedValue, objectCodingInstance.nestedObject.nestedValue)
+        XCTAssertEqual(nestedKeyCodingInstance.rootValue, objectCodingInstance.rootValue)
+        XCTAssertEqual(nestedKeyCodingInstance.nestedValue, objectCodingInstance.nestedObject.nestedValue)
+    }
+    
+    func test_decodeNested_failsBecauseOfTypeMismatch() throws {
+        let jsonData = Data(#"{"rootValue":"root","nestedObject":"value"}"#.utf8)
+        
+        XCTAssertThrowsError(
+            try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: jsonData))
+            { AssertIsDecodingTypeMismatchError($0, at: "nestedObject") }
+    }
+    
+    func test_decodeNested_failsBecauseOfMissingKeyAtStartOfPath() throws {
+        let jsonData = Data(#"{"rootValue":"root","nestedDictionary":{"nestedValue":"nested"}}"#.utf8)
+        
+        XCTAssertThrowsError(
+            try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: jsonData))
+            { AssertIsDecodingKeyNotFoundError($0, at: "nestedObject") }
+    }
+    
+    func test_decodeNested_failsBecauseOfMissingKeyAtEndOfPath() throws {
+        let jsonData = Data(#"{"rootValue":"root","nestedObject":{"nestedString":"nested"}}"#.utf8)
+        
+        XCTAssertThrowsError(
+            try NestedKeyCoding.decoder.decode(NestedKeyCoding.self, from: jsonData))
+            { AssertIsDecodingKeyNotFoundError($0, at: "nestedObject.nestedValue") }
     }
 
+}
+
+// MARK: Error Handling helpers
+
+func AssertIsDecodingTypeMismatchError(
+    _ error: Error,
+    at expectedPath: String,
+    file: StaticString = #file,
+    line: UInt = #line)
+{
+    switch error as? DecodingError {
+    case .typeMismatch(_, let context):
+        let errorPath = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+        XCTAssertEqual(errorPath, expectedPath, "Unexpected coding path: \(errorPath)", file: file, line: line)
+    default:
+        XCTAssertTrue(false, "Expected `DecodingError.typeMismatch`, got \(error)", file: file, line: line)
+    }
+}
+
+func AssertIsDecodingKeyNotFoundError(
+    _ error: Error,
+    at expectedPath: String,
+    file: StaticString = #file,
+    line: UInt = #line)
+{
+    switch error as? DecodingError {
+    case .typeMismatch(_, let context):
+        let errorPath = context.codingPath.map { $0.stringValue }.joined(separator: ".")
+        XCTAssertEqual(errorPath, expectedPath, "Unexpected coding path: \(errorPath)", file: file, line: line)
+    default:
+        XCTAssertTrue(false, "Expected `DecodingError.typeMismatch`, got \(error)", file: file, line: line)
+    }
 }
