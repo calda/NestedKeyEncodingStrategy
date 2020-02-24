@@ -1,7 +1,7 @@
 # Add support for Encoding and Decoding nested JSON keys
 
 * Authors: [Cal Stephens](https://github.com/calda)
-* Prototype implementation in this repo
+* Prototype implementation: [diff](https://github.com/calda/NestedKeyEncodingStrategy/pull/1/files#diff-8ff2eba96e32f178462fed931f39208bR205)
 
 ## Introduction
 
@@ -149,3 +149,4 @@ We wouldn't be able to support both nested and flat keys in `JSONEncoder`, since
 ### Support indexing into arrays or other advanced operations
 
 This design could potentially support advanced operations like indexing into arrays (`metadata.authors[0].email`, etc). Objective-C Key-Value Coding paths, for example, has a [very complex and sophisticated](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/CollectionOperators.html#//apple_ref/doc/uid/20002176-BAJEAIEE) DSL. The author believes that there isn't enough need or existing precident to warrant a more complex design.
+
