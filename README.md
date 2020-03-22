@@ -2,7 +2,8 @@
 
 * Authors: [Cal Stephens](https://github.com/calda)
 * Prototype implementation: [diff](https://github.com/calda/NestedKeyEncodingStrategy/pull/1/files#diff-8ff2eba96e32f178462fed931f39208bR205)
-* Status: `Foundation.JSONEncoder` isn't eligible for Swift Evolution process ([link](https://github.com/apple/swift-evolution/pull/1127#issuecomment-591642977)). Feedback from Tony Parker (on the Foundation team at Apple, [link](https://forums.swift.org/t/add-support-for-encoding-and-decoding-nested-json-keys/34039/11?u=cal)) will inform a second draft.
+* Discussion: [Swift Evolution forums](https://forums.swift.org/t/add-support-for-encoding-and-decoding-nested-json-keys/34039)
+* Status: `Foundation.JSONEncoder` isn't eligible for Swift Evolution process ([link](https://github.com/apple/swift-evolution/pull/1127#issuecomment-591642977)). Feedback from Tony Parker (on the Foundation team at Apple, [link](https://forums.swift.org/t/add-support-for-encoding-and-decoding-nested-json-keys/34039/11?u=cal)) informed a second draft ([calda/CodingKeyPaths](https://github.com/calda/CodingKeyPaths)).
 
 ## Introduction
 
